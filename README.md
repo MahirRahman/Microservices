@@ -114,7 +114,6 @@ Project Link: [https://github.com/MahirRahman/Microservices](https://github.com/
 ## Acknowledgments
 
 * This ReadMe.md tempate was taken from: https://github.com/othneildrew/Best-README-Template
-* This project idea was inspired by Eric Matthes
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
