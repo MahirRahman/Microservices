@@ -1,0 +1,61 @@
+<%- include('header'); %>
+<body>
+    <div class="container my-5">
+        <h1> Amazon Price Checker </h1>
+        <% if (data === "None") { %> 
+            <p>
+                The app is still in development. With Amazon removing ids from their span tags. Web scrapping for prices is a bit difficult. That is why, please try to use the following product links below. The app was also capable of sending emails using send grid, but due to security measures, I have decided to leave it out for now. You can check out my <a href="#"> Github </a> for the desired implementation 
+            </p>
+        <% } %>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Product</th>
+                <th scope="col">URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Monitor</td>
+                <td><a target="_blank" href="https://www.amazon.com/Acer-SB220Q-Ultra-Thin-Frame-Monitor/dp/B07CVL2D2S/">https://www.amazon.com/Acer-SB220Q-Ultra-Thin-Frame-Monitor/dp/B07CVL2D2S/</a></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Mouse</td>
+                <td><a target="_blank" href="https://www.amazon.com/Wireless-Uiosmuph-Rechargeable-Portable-Computer/dp/B0836GXKKB/">https://www.amazon.com/Wireless-Uiosmuph-Rechargeable-Portable-Computer/dp/B0836GXKKB/</a></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Keyboard</td>
+                <td><a target="_blank" href="https://www.amazon.com/Redragon-K552-Mechanical-Keyboard-Equivalent/dp/B016MAK38U/">https://www.amazon.com/Redragon-K552-Mechanical-Keyboard-Equivalent/dp/B016MAK38U/</a></td>
+              </tr>
+            </tbody>
+          </table>
+          <% if (data === 'result') { %>
+            <h3 class="my-5"> 
+                Results can be viewed in the terminal
+            </h3>
+        <% } %>
+        <% if (data === "None") { %> 
+        <form action="/webscrapper/updates" method="post">
+            <div class="form-group">
+                <label for="url_id">Enter your URL</label>
+                <input name="url" type="url" class="form-control" id="url_id" placeholder="Enter URL" required>
+            </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Desired Price (in $) </label>
+                    <input name="price" type="number" class="form-control" id="price_id" placeholder="0.00" required>
+                    <small id="priceHelp" class="form-text text-muted">Please enter a valid number without any symbols. </small>
+                </div>
+            <div class="form-group">
+            <label for="email_id">Email address</label>
+            <input name="email" type="email" class="form-control" id="email_id" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">Email Services are currently down. You can submit your email but we will not be using or keeping it.</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <% } %>
+    </div>
+</body>

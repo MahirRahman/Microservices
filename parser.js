@@ -1,13 +1,10 @@
 require('dotenv').config()
 const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// sgMail.setApiKey(***)
 const puppeteer = require('puppeteer');
 const $ = require('cheerio').default;
-const CronJob = require('cron');
 
-const url = 'https://www.amazon.com/Wireless-Uiosmuph-Rechargeable-Portable-Computer/dp/B0836GXKKB/';
-
-async function configureBrowser() {
+async function configureBrowser(url) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
@@ -24,39 +21,45 @@ async function checkPrice(page, url, desiredPrice, email="") {
             price = $(this).text();
         }
     });
+    console.log(price);
     if (price == null) {
-        // Do something
+        console.log("This is not an Amazon URL");
     }
     else {
         actualPrice = Number(price.replace(/[^0-9.-]+/g, ""));
-        if (email !== "") {
-            sendNotification(url, actualPrice, desiredPrice, email);
-        }
+        console.log(actualPrice)
+        console.log(showMessage(url, actualPrice, desiredPrice, email));
     }
 }
 
 async function startTracking(url, desiredPrice, email="") {
-    let page = await configureBrowser();
-    // let job = new CronJob('* */15s * * * *', function() {
-    //     checkPrice(page);
-    // }, null, true, null, null, true);
-    // job.start();
+    let page = await configureBrowser(url);
     await checkPrice(page, url, desiredPrice, email);
 }
 
+function showMessage(url, actualPrice, desiredPrice, email) {
+    var data = "";
+    if (actualPrice > desiredPrice) {
+        data = 'Price has not fallen to desired level. It is currently: ' + actualPrice;
+    }
+    else {
+        data = "Price has fallen below your desired price of $" + desiredPrice + ". It is now at $" + actualPrice;
+    }
+    return data;
+}
 async function sendNotification(url, actualPrice, desiredPrice, email) {
     if (actualPrice > desiredPrice) {
         const msg = {
             to: email,
-            from: 'amazon-price-checker@gmail.com',
-            subject: 'Price Change Detected',
-            text: 'Price dropped to ' + actualPrice,
-            html: `<a href= \"${url}\" > Link </a>`
+            from: '*****r@gmail.com',
+            subject: 'Price Has Not Fallen to desired Level',
+            text: 'Price has not falled to desired level. It is currently: ' + actualPrice,
+            html: `Here is a link to the product landing page: <a href= \"${url}\" > Link </a>`
         }
 
         sgMail.send(msg)
             .then(() => {
-                console.log('Email sent')
+                console.log('Email sent 1')
             })
             .catch((error) => {
                 console.error(error)
@@ -66,18 +69,19 @@ async function sendNotification(url, actualPrice, desiredPrice, email) {
         const msg = {
             to: email,
             from: process.env.email,
-            subject: 'Price Change Detected',
-            text: 'Price dropped to ' + actualPrice,
-            html: `<a href= \"${url}\" > Link </a>`
+            subject: 'Price Has Fallen Below Desired Prices!!!',
+            text: 'Congratulations! The wait is over. Your desired product\'s price has dropped to ' + actualPrice,
+            html: `Here is a link to your product's landing page <a href= \"${url}\" > Link </a>`
         }
 
         sgMail.send(msg)
             .then(() => {
-                console.log('Email sent')
+                console.log('Email sent 2')
             })
             .catch((error) => {
                 console.error(error)
             })
     }
 }
-startTracking('https://www.amazon.com/Wireless-Uiosmuph-Rechargeable-Portable-Computer/dp/B0836GXKKB/', 100, 'rahmanm7@miamioh.edu');
+// startTracking('https://www.amazon.com/Manhattan-104-key-Keyboard-Built-Indicator/dp/B07RQVB3HQ/', 1, 'rahmanm7@miamioh.edu');
+module.exports = { startTracking }
